@@ -45,8 +45,8 @@ void quicksort(unsigned int left, unsigned int right)
     if (left < right)
     {
         srand(time(0));
-        int pos = left + rand() % (right - left); /// pozitie random pt pivot
-        pos = ordonare(left, right, pos);         /// noua pozitie
+        unsigned int pos = left + rand() % (right - left); /// pozitie random pt pivot
+        pos = ordonare(left, right, pos);                  /// noua pozitie
 
         quicksort(left, pos);
         quicksort(pos + 1, right);
@@ -57,11 +57,11 @@ void quicksort(unsigned int left, unsigned int right)
 void shellsort(unsigned int v[], unsigned int n)
 {
     /// worst case: shell sort=insertion sort
-    for (int gap = n / 2; gap > 0; gap--) /// micsoram gap ul dintre numere
+    for (unsigned int gap = n / 2; gap > 0; gap--) /// micsoram gap ul dintre numere
     {
-        for (int i = gap; i < n; i += 1)
+        for (unsigned int i = gap; i < n; i += 1)
         {
-            int aux = v[i];
+            unsigned int aux = v[i];
 
             int j;
             for (j = i; j >= gap && v[j - gap] > aux; j = j - gap)
@@ -76,13 +76,13 @@ void mergesort(unsigned int left, unsigned int right)
     /// Complexitate totala O(nlogn)
     if (left < right)
     {
-        int mid = (left + right) / 2;
+        unsigned int mid = (left + right) / 2;
 
         mergesort(left, mid);
         mergesort(mid + 1, right);
         /// DEI
 
-        int k = 0, i = left, j = mid + 1;
+        unsigned int k = 0, i = left, j = mid + 1;
         while (i <= mid && j <= right)
         {
             if (v[i] < v[j])
@@ -104,10 +104,10 @@ void mergesort(unsigned int left, unsigned int right)
     }
 }
 
-void countsort(unsigned intv[], unsigned int n)
+void countsort(unsigned int v[], unsigned int n)
 {
-    int max_element = v[0];
-    for (int i = 1; i < n; i++)
+    unsigned int max_element = v[0];
+    for (unsigned int i = 1; i < n; i++)
     {
         if (v[i] > max_element)
         {
@@ -117,14 +117,14 @@ void countsort(unsigned intv[], unsigned int n)
     /// am gasit elementul maxim
 
     /// facem un vector nou de frecvente
-    int contor[max_element + 1];
+    unsigned int contor[max_element + 1];
     for (int i = 0; i <= max_element; i++)
     {
         contor[i] = 0;
     }
 
     /// vector de frecvente
-    for (int i = 0; i < n; i++)
+    for (unsigned int i = 0; i < n; i++)
     {
         contor[v[i]]++;
     }
@@ -171,19 +171,19 @@ void countingsort(unsigned int v[], unsigned int n, int e)
 
 void radixsort(unsigned int v[], unsigned int n)
 {
-    int m = v[0];
-    for (int i = 1; i < n; i++)
+    unsigned int m = v[0];
+    for (unsigned int i = 1; i < n; i++)
         if (v[i] > m)
             m = v[i];
     /// maximul din vector
-    for (int e = 1; m / e > 0; e *= 10)
+    for (unsigned int e = 1; m / e > 0; e *= 10)
         countingsort(v, n, e);
 }
 
 /// verific daca vectorul a fost sortat corect
 bool check(unsigned int v[], unsigned int n)
 {
-    for (int i = 1; i < n; i++)
+    for (unsigned int i = 1; i < n; i++)
         if (v[i] < v[i - 1])
             return false;
     return true;
@@ -192,7 +192,7 @@ bool check(unsigned int v[], unsigned int n)
 /// verific daca vectorul are valori distincte sau nu
 bool egale(unsigned int v[], unsigned int n)
 {
-    for (int i = 1; i < n; i++)
+    for (unsigned int i = 1; i < n; i++)
         if (v[i] != v[i - 1])
             return 0;
     return 1;
@@ -246,11 +246,13 @@ int main()
     while (nrtestcurent < 5 * nrteste)
     {
         f >> n;
+
         if (n > 1000000000)
         {
             cout << "Nu putem testa algoritmii, sunt prea multe numere de input";
             return 0;
         }
+
         f >> nmaxi;
 
         for (i = 0; i < n; i++)
@@ -260,36 +262,78 @@ int main()
         }
 
         auto start = high_resolution_clock::now();
-
-        radixsort(v, n);
-
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<nanoseconds>(stop - start);
 
-        if (check(v, n) == 1)
-            cout << "Timp de executie pentru testul"
-                 << " de la radixsort este " << duration.count() << endl;
-
-        else
-            cout << "Vectorul nu a fost sortat corect." << endl;
-
-        nrtestcurent++;
-
-        ///------------------------------------------------------------------------
-        for (i = 0; i < n; i++)
-            v[i] = vect[i];
-        if (egale(v, n) == 1)
-            cout << "Quicksort nu este deloc eficient pentru acest input, deoarece toate numerele sunt egale.";
+        if (nmaxi >= 100000000)
+            cout << "RadixSort nu poate sorta, deoarece nmaxi este prea mare" << endl;
         else
         {
             start = high_resolution_clock::now();
-            quicksort(0, n);
+
+            radixsort(v, n);
+
             stop = high_resolution_clock::now();
             duration = duration_cast<nanoseconds>(stop - start);
 
             if (check(v, n) == 1)
                 cout << "Timp de executie pentru testul"
-                     << " de la quicksort este " << duration.count() << endl;
+                     << " de la radixsort este " << duration.count() << endl;
+
+            else
+                cout << "Vectorul nu a fost sortat corect." << endl;
+        }
+       
+
+        nrtestcurent++;
+
+        ///------------------------------------------------------------------------
+
+        for (i = 0; i < n; i++)
+            v[i] = vect[i];
+        if (n >= 100000000)
+            cout << "Qucicksort nu poate sorta, deoarece nmaxi este prea mare" << endl;
+        else
+        {
+            if (egale(v, n) == 1)
+                cout << "Quicksort nu este deloc eficient pentru acest input, deoarece toate numerele sunt egale.";
+            else
+            {
+                start = high_resolution_clock::now();
+                quicksort(0, n);
+                stop = high_resolution_clock::now();
+                duration = duration_cast<nanoseconds>(stop - start);
+
+                if (check(v, n) == 1)
+                    cout << "Timp de executie pentru testul"
+                         << " de la quicksort este " << duration.count() << endl;
+                else
+                    cout << "Vectorul nu a fost sortat corect." << endl;
+            }
+        }
+
+        nrtestcurent++;
+
+        ///------------------------------------------------------------------------
+
+        for (i = 0; i < n; i++)
+            v[i] = vect[i];
+
+        if (nmaxi > 1000000)
+            cout << "CountSort nu poate sorta, deoarece nmaxi este prea mare" << endl;
+        else if (n >= 100000000)
+            cout << "CountSort nu poate sorta, deoarece sunt prea multe numere" << endl;
+        else
+        {
+
+            start = high_resolution_clock::now();
+            countsort(v, n);
+            stop = high_resolution_clock::now();
+            duration = duration_cast<nanoseconds>(stop - start);
+
+            if (check(v, n) == 1)
+                cout << "Timp de executie pentru testul"
+                     << " de la countsort este " << duration.count() << endl;
             else
                 cout << "Vectorul nu a fost sortat corect." << endl;
         }
@@ -297,59 +341,55 @@ int main()
         nrtestcurent++;
 
         ///------------------------------------------------------------------------
+
         for (i = 0; i < n; i++)
             v[i] = vect[i];
-
-        start = high_resolution_clock::now();
-        countsort(v, n);
-        stop = high_resolution_clock::now();
-        duration = duration_cast<nanoseconds>(stop - start);
-
-        if (check(v, n) == 1)
-            cout << "Timp de executie pentru testul"
-                 << " de la countsort este " << duration.count() << endl;
-        else
-            cout << "Vectorul nu a fost sortat corect." << endl;
-
-        nrtestcurent++;
-
-        ///------------------------------------------------------------------------
-        for (i = 0; i < n; i++)
-            v[i] = vect[i];
-
-        start = high_resolution_clock::now();
+        if(egale(v,n)==1)
+        cout<<"Algorimtul nu va efectua sortarea eficient deoarece numerele sunt egale. "<<endl;
+        else{
+            start = high_resolution_clock::now();
         shellsort(v, n);
         stop = high_resolution_clock::now();
         duration = duration_cast<nanoseconds>(stop - start);
 
         if (check(v, n) == 1)
             cout << "Timp de executie pentru testul"
-                 << " de la shellsort este " << duration.count() << endl;
+                << " de la shellsort este " << duration.count() << endl;
         else
             cout << "Vectorul nu a fost sortat corect." << endl;
+
+        }
+        
 
         nrtestcurent++;
 
         ///------------------------------------------------------------------------
+
         for (i = 0; i < n; i++)
             v[i] = vect[i];
 
-        start = high_resolution_clock::now();
-        mergesort(0, n - 1);
-        stop = high_resolution_clock::now();
-        duration = duration_cast<nanoseconds>(stop - start);
-
-        if (check(v, n) == 1)
-            cout << "Timp de executie pentru testul"
-                 << " de la mergesort este " << duration.count() << endl;
-
+        if (n > 10000000)
+            cout << "MergeSort nu poate sorta, deoarece sunt prea multe numere" << endl;
         else
-            cout << "Vectorul nu a fost sortat corect." << endl;
+        {
+            start = high_resolution_clock::now();
+            mergesort(0, n - 1);
+            stop = high_resolution_clock::now();
+            duration = duration_cast<nanoseconds>(stop - start);
+
+            if (check(v, n) == 1)
+                cout << "Timp de executie pentru testul"
+                     << " de la mergesort este " << duration.count() << endl;
+
+            else
+                cout << "Vectorul nu a fost sortat corect." << endl;
+        }
 
         nrtestcurent++;
-    
-    cout<<endl;
+
+        cout << endl;
     }
+    cout << "THE END";
     f.close();
     f2.close();
     return 0;
