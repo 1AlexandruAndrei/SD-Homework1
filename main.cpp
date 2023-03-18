@@ -63,7 +63,7 @@ void shellsort(unsigned int v[], unsigned int n)
         {
             unsigned int aux = v[i];
 
-            int j;
+            unsigned int j;
             for (j = i; j >= gap && v[j - gap] > aux; j = j - gap)
                 v[j] = v[j - gap];
             v[j] = aux; /// pun elementul in pozitia buna
@@ -179,6 +179,12 @@ void radixsort(unsigned int v[], unsigned int n)
     for (unsigned int e = 1; m / e > 0; e *= 10)
         countingsort(v, n, e);
 }
+
+///algoritm de sortare nativ
+void sortArray(unsigned int v[], int n) {
+    sort(v, v + n);
+}
+
 
 /// verific daca vectorul a fost sortat corect
 bool check(unsigned int v[], unsigned int n)
@@ -380,6 +386,30 @@ int main()
             if (check(v, n) == 1)
                 cout << "Timp de executie pentru testul"
                      << " de la mergesort este " << duration.count() << endl;
+
+            else
+                cout << "Vectorul nu a fost sortat corect." << endl;
+        }
+
+        nrtestcurent++;
+
+        ///---------------------------------------------------------------------------------
+
+        for (i = 0; i < n; i++)
+            v[i] = vect[i];
+
+        if (n > 10000000)
+            cout << "Algoritmul de sortare nativ nu poate sorta, deoarece sunt prea multe numere" << endl;
+        else
+        {
+            start = high_resolution_clock::now();
+            sortArray(v, n);
+            stop = high_resolution_clock::now();
+            duration = duration_cast<nanoseconds>(stop - start);
+
+            if (check(v, n) == 1)
+                cout << "Timp de executie pentru testul"
+                     << " de la algoritmul de sortare nativ este " << duration.count() << endl;
 
             else
                 cout << "Vectorul nu a fost sortat corect." << endl;
